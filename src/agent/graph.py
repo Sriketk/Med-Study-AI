@@ -8,14 +8,6 @@ from langchain.chat_models import init_chat_model
 from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage
 
-# - Temperature: {temperature}
-# - History: {history}
-# - Demographics: {demographics}
-# - Family History: {familyHistory}
-# - Allergies: {allergies}
-# - History: {history}
-# - Medications: {medications}
-
 
 llm = init_chat_model("openai:gpt-4o")
 
@@ -34,6 +26,13 @@ You have this information:
 - Pulse: {pulse}
 - Respirations: {respirations}
 - Physical Examination: {physicalExamination}
+- Temperature: {temperature}
+- History: {history}
+- Demographics: {demographics}
+- Family History: {familyHistory}
+- Allergies: {allergies}
+- History: {history}
+- Medications: {medications}
 
 
 
@@ -80,6 +79,13 @@ Patient Information Available:
 - Pulse: {pulse}
 - Respirations: {respirations}
 - Physical Examination: {physicalExamination}
+- Temperature: {temperature}
+- History: {history}
+- Demographics: {demographics}
+- Family History: {familyHistory}
+- Allergies: {allergies}
+- History: {history}
+- Medications: {medications}
 
 Your Teaching Approach:
 1. **Confirm the correct answer** and explain why it's right
@@ -125,6 +131,12 @@ class State(MessagesState):
     respirations: str = ""
     pulse: str = ""
     physicalExamination: str = ""
+    temperature: str = ""
+    history: str = ""
+    demographics: str = ""
+    familyHistory: str = ""
+    allergies: str = ""
+    medications: str = ""
 
 
 graph_builder = StateGraph(State)
