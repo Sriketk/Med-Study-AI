@@ -1,7 +1,7 @@
 from typing import Annotated
 from typing_extensions import TypedDict
 from langchain_core.prompts import ChatPromptTemplate
-from langgraph.graph import StateGraph, START
+from langgraph.graph import StateGraph, START, MessagesState
 from langgraph.graph.message import add_messages
 import os
 from langchain.chat_models import init_chat_model
@@ -15,9 +15,6 @@ from langchain_core.messages import SystemMessage
 # - Allergies: {allergies}
 # - History: {history}
 # - Medications: {medications}
-
-
-
 
 
 llm = init_chat_model("openai:gpt-4o")
@@ -70,9 +67,9 @@ explanation_prompt_template = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            """You are an expert medical professional providing detailed explanations for medical exam questions.
+            """You are an expert medical educator providing explanations for medical exam questions.
 
-Given:
+Patient Information Available:
 - Question: {question}
 - Clinical Context: {context} 
 - Answer Choices: {options}
@@ -84,46 +81,24 @@ Given:
 - Respirations: {respirations}
 - Physical Examination: {physicalExamination}
 
+Your Teaching Approach:
+1. **Confirm the correct answer** and explain why it's right
+2. **Address incorrect choices** - explain why each wrong option doesn't fit
+3. **If student answered incorrectly:**
+   - Analyze their reasoning process
+   - Identify what clinical clues they may have missed
+   - Guide them to the correct diagnostic pathway
 
-Your role is to:
-1. Confirm the correct answer and provide a comprehensive explanation of why it is correct
-2. Explain why each incorrect answer choice is wrong
-3. If the student answered incorrectly:
-   - Analyze their likely reasoning that led to that choice
-   - Identify specific elements in the question stem or clinical context that, if different, would have made their answer correct
-   - Guide them toward understanding why the correct answer is more appropriate
+Response Guidelines:
+- **Be concise by default** - keep explanations brief and focused
+- **For simple questions** (what, when, basic facts): Answer in 1-2 sentences
+- **For complex questions** (why, how, pathophysiology): Provide detailed explanations when necessary
+- **Use clear medical reasoning** with supporting evidence
+- **Maintain an encouraging, educational tone**
+- **For non-medical questions**: Respond with "I'm not ChatGPT. Put some respect on my name"
 
-Focus on being clear, thorough, and educational in your explanations while maintaining a supportive tone.
-
-Example Response:
-"Let me explain why option B (Beta-blockers) is incorrect for this patient's hypertension management.
-
-The key reasons why beta-blockers would not be the optimal choice:
-
-1. Patient Characteristics:
-- The patient is a 68-year-old African American female
-- Has uncomplicated essential hypertension
-- Blood pressure reading of 152/91 mmHg
-
-2. Why Beta-blockers are not ideal:
-- Beta-blockers are no longer recommended as first-line therapy for uncomplicated hypertension in elderly patients
-- African American patients typically respond less favorably to beta-blockers compared to other antihypertensive medications
-- They can mask symptoms of hypoglycemia in diabetic patients
-- May cause fatigue and decreased exercise tolerance in elderly patients
-
-3. Better alternatives would include:
-- Thiazide diuretics
-- Calcium channel blockers
-These medications have shown better efficacy in African American patients and elderly populations.
-
-4. When beta-blockers would be appropriate:
-- If the patient had concurrent conditions like:
-  * Coronary artery disease
-  * Heart failure
-  * Tachyarrhythmias
-  * Post-myocardial infarction
-
-Understanding the patient's demographics and comorbidities is crucial in selecting the most appropriate antihypertensive medication. The choice should align with current guidelines while considering individual patient factors."
+Example Concise Response:
+"The correct answer is C (17 alpha-hydroxylase deficiency). This enzyme deficiency causes lack of sex hormone production while maintaining mineralocorticoid activity, explaining the patient's absent puberty, hypertension, and 46,XY karyotype with female phenotype."
 """,
         ),
         ("user", "{user_question}"),
@@ -131,39 +106,45 @@ Understanding the patient's demographics and comorbidities is crucial in selecti
 )
 
 
-class State(TypedDict):
-    messages: Annotated[list, add_messages]
+class State(MessagesState):
+    """Extended MessagesState with medical case information."""
+
     context: str
     question: str
     answer: str
-    userAnswer: str | None = ""
+    userAnswer: str = ""
     questionAnswered: bool = False
-     
-    # demographics: list[str] | None = []
-    # history: list[str] | None = []
-    medications: list[str] | None = []
-    allergies: list[str] | None = []
-    familyHistory: list[str] | None = []
-    labResults: list[str] | None = []
-    options: list[str] | None = []
-    # temperature: str | None = ""
-    bloodPresure: str | None = ""
-    respirations: str | None = ""
-    pulse: str | None = ""
-    physicalExamination: str | None = ""
-    
+
+    # Optional medical information
+    medications: list[str] = []
+    allergies: list[str] = []
+    familyHistory: list[str] = []
+    labResults: list[str] = []
+    options: list[str] = []
+    bloodPresure: str = ""
+    respirations: str = ""
+    pulse: str = ""
+    physicalExamination: str = ""
 
 
 graph_builder = StateGraph(State)
 
 
 def get_response(state: State):
-    """Determine which prompt to use and get a response from the LLM."""
+    """Determine which prompt to use and get a response from the LLM.
+    If the user has not answered the question, you will not provide the answer or any explanation of the answer choices.
+    You can only provide the details of the patients and the context provided to you.
+    Once the user has answered the question, you can provide clarifications of the answer choices
+    """
     user_question = state["messages"][-1]
     if state["questionAnswered"]:
-        prompt = explanation_prompt_template.invoke({**state, "user_question": user_question.content})
+        prompt = explanation_prompt_template.invoke(
+            {**state, "user_question": user_question.content}
+        )
     else:
-        prompt = context_prompt_template.invoke({**state, "user_question": user_question.content})
+        prompt = context_prompt_template.invoke(
+            {**state, "user_question": user_question.content}
+        )
 
     response = llm.invoke(prompt)
     return {"messages": [response]}
