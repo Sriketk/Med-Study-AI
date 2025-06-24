@@ -37,6 +37,7 @@ You have this information:
 
 
 
+
 Example Response 1:
 User: "Can you tell me about the patient's symptoms?"
 Assistant: "The patient is a 13 year old girl who feels well but is worried about not starting puberty yet. Physical examination shows a lack of secondary sexual characteristics and a blind vagina is noted on pelvic examination."
@@ -134,9 +135,6 @@ class State(MessagesState):
     temperature: str = ""
     history: str = ""
     demographics: str = ""
-    familyHistory: str = ""
-    allergies: str = ""
-    medications: str = ""
 
 
 graph_builder = StateGraph(State)
