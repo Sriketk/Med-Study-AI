@@ -164,9 +164,4 @@ graph_builder.add_node("llm_responder", get_response)
 graph_builder.add_edge(START, "llm_responder")
 graph_builder.add_edge("llm_responder", "__end__")
 
-value: bool
-
-print(value)
-
-
-# graph = graph_builder.compile()
+graph = graph_builder.compile()
