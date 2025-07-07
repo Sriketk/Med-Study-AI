@@ -1,13 +1,8 @@
-from typing import Annotated
-from typing_extensions import TypedDict
-from langchain_core.prompts import ChatPromptTemplate
-from langgraph.graph import StateGraph, START, MessagesState
-from langgraph.graph.message import add_messages
-import os
-from langchain.chat_models import init_chat_model
-from pydantic import BaseModel, Field
-from langchain_core.messages import SystemMessage
+"""This file contains the graph for the medical agent."""
 
+from langchain.chat_models import init_chat_model
+from langchain_core.prompts import ChatPromptTemplate
+from langgraph.graph import START, MessagesState, StateGraph
 
 llm = init_chat_model("openai:gpt-4o")
 
@@ -142,6 +137,7 @@ graph_builder = StateGraph(State)
 
 def get_response(state: State):
     """Determine which prompt to use and get a response from the LLM.
+
     If the user has not answered the question, you will not provide the answer or any explanation of the answer choices.
     You can only provide the details of the patients and the context provided to you.
     Once the user has answered the question, you can provide clarifications of the answer choices.
