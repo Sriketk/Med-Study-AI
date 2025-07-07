@@ -141,6 +141,7 @@ graph_builder = StateGraph(State)
 
 
 def get_response(state: State):
+    
     """Determine which prompt to use and get a response from the LLM.
     If the user has not answered the question, you will not provide the answer or any explanation of the answer choices.
     You can only provide the details of the patients and the context provided to you.
