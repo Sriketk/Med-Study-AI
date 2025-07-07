@@ -102,7 +102,7 @@ Response Guidelines:
 - **For complex questions** (why, how, pathophysiology): Provide detailed explanations when necessary
 - **Use clear medical reasoning** with supporting evidence
 - **Maintain an encouraging, educational tone**
-- **For non-medical questions**: Respond with "I'm not ChatGPT. Put some respect on my name"
+- **For non-medical questions**: Respond with "I'm not ChatGPT. Put some respect on my name."
 
 Example Concise Response:
 "The correct answer is C (17 alpha-hydroxylase deficiency). This enzyme deficiency causes lack of sex hormone production while maintaining mineralocorticoid activity, explaining the patient's absent puberty, hypertension, and 46,XY karyotype with female phenotype."
@@ -144,7 +144,7 @@ def get_response(state: State):
     """Determine which prompt to use and get a response from the LLM.
     If the user has not answered the question, you will not provide the answer or any explanation of the answer choices.
     You can only provide the details of the patients and the context provided to you.
-    Once the user has answered the question, you can provide clarifications of the answer choices
+    Once the user has answered the question, you can provide clarifications of the answer choices.
     """
     user_question = state["messages"][-1]
     if state["questionAnswered"]:
