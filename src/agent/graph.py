@@ -118,18 +118,18 @@ class State(MessagesState):
     questionAnswered: bool
 
     # Optional medical information
-    medications: list[str] 
-    allergies: list[str] 
-    familyHistory: list[str] 
-    labResults: list[str] 
-    options: list[str] 
-    bloodPresure: str 
-    respirations: str 
-    pulse: str 
-    physicalExamination: str 
-    temperature: str 
-    history: str 
-    demographics: str 
+    medications: list[str]
+    allergies: list[str]
+    familyHistory: list[str]
+    labResults: list[str]
+    options: list[str]
+    bloodPresure: str
+    respirations: str
+    pulse: str
+    physicalExamination: str
+    temperature: str
+    history: str
+    demographics: str
 
 
 graph_builder = StateGraph(State)
@@ -153,7 +153,26 @@ def get_response(state: State) -> State:
         )
 
     response = llm.invoke(prompt)
-    return {"messages": [response]}
+    return {
+        "messages": [response],
+        "questionAnswered": state["questionAnswered"],
+        "userAnswer": state["userAnswer"],
+        "context": state["context"],
+        "question": state["question"],
+        "answer": state["answer"],
+        "options": state["options"],
+        "labResults": state["labResults"],
+        "bloodPresure": state["bloodPresure"],
+        "respirations": state["respirations"],
+        "pulse": state["pulse"],
+        "physicalExamination": state["physicalExamination"],
+        "temperature": state["temperature"],
+        "history": state["history"],
+        "demographics": state["demographics"],
+        "familyHistory": state["familyHistory"],
+        "allergies": state["allergies"],
+        "medications": state["medications"],
+    }
 
 
 # The first argument is the unique node name
