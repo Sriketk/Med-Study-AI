@@ -114,22 +114,22 @@ class State(MessagesState):
     context: str
     question: str
     answer: str
-    userAnswer: str = ""
-    questionAnswered: bool = False
+    userAnswer: str
+    questionAnswered: bool
 
     # Optional medical information
-    medications: list[str] = []
-    allergies: list[str] = []
-    familyHistory: list[str] = []
-    labResults: list[str] = []
-    options: list[str] = []
-    bloodPresure: str = ""
-    respirations: str = ""
-    pulse: str = ""
-    physicalExamination: str = ""
-    temperature: str = ""
-    history: str = ""
-    demographics: str = ""
+    medications: list[str] 
+    allergies: list[str] 
+    familyHistory: list[str] 
+    labResults: list[str] 
+    options: list[str] 
+    bloodPresure: str 
+    respirations: str 
+    pulse: str 
+    physicalExamination: str 
+    temperature: str 
+    history: str 
+    demographics: str 
 
 
 graph_builder = StateGraph(State)
