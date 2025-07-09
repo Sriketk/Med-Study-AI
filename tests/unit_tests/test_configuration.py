@@ -26,5 +26,6 @@ def test_graph_initialization_without_api_key() -> None:
         with pytest.raises(ValueError, match="OpenAI API key not found"):
             # This should trigger the import and raise the error
             import importlib
+
             import agent.graph
             importlib.reload(agent.graph)
