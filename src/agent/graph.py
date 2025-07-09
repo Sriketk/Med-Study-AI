@@ -1,9 +1,10 @@
 """This file contains the graph for the medical agent."""
 
+from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import START, MessagesState, StateGraph
-from dotenv import load_dotenv
+
 load_dotenv()
 
 
