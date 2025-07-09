@@ -9,6 +9,7 @@ from langgraph.graph import START, MessagesState, StateGraph
 
 load_dotenv()
 
+
 # Get API key from environment
 api_key = os.environ.get("OPENAI_API_KEY")
 if not api_key:
