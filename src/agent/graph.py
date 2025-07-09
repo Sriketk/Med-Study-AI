@@ -9,13 +9,19 @@ from langgraph.graph import START, MessagesState, StateGraph
 
 load_dotenv()
 
+# Get API key from environment
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError(
+        "OpenAI API key not found. Please set OPENAI_API_KEY environment variable."
+    )
 
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=0.5,
     max_tokens=None,
     timeout=None,
-    api_key=os.environ.get("OPENAI_API_KEY"),
+    api_key=api_key,
 )
 
 context_prompt_template = ChatPromptTemplate.from_messages(
