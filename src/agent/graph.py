@@ -15,7 +15,7 @@ llm = ChatOpenAI(
     temperature=0.5,
     max_tokens=None,
     timeout=None,
-    api_key=os.getenv("OPENAI_API_KEY"),
+    api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
 context_prompt_template = ChatPromptTemplate.from_messages(
