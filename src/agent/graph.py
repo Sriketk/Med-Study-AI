@@ -4,11 +4,19 @@ from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import START, MessagesState, StateGraph
+from langchain_openai import ChatOpenAI
+import os
 
 load_dotenv()
 
 
-llm = init_chat_model("openai:gpt-4o")
+llm = ChatOpenAI(
+    model="gpt-4o",
+    temperature=0.5,
+    max_tokens=None,
+    timeout=None,
+    api_key=os.getenv("OPENAI_API_KEY"),
+)
 
 context_prompt_template = ChatPromptTemplate.from_messages(
     [
