@@ -135,13 +135,14 @@ class State(MessagesState):
     answer: str
     userAnswer: str
     questionAnswered: bool
+    options: list[str]
+
 
     # Optional medical information
     medications: list[str]
     allergies: list[str]
     familyHistory: list[str]
     labResults: list[str]
-    options: list[str]
     bloodPresure: str
     respirations: str
     pulse: str
